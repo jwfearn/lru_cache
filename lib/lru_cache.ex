@@ -68,6 +68,21 @@ defmodule LruCache do
   end
 
   @doc """
+  Returns either the value from the cache, or the result of calling `func`. If the value in the
+  cache is `nil`, will call `func`, storing the resulting `value` in the cache before returning
+  it. If the `value` in the cache is not `nil`, that will be returned without calling `func`.
+  """
+  def fetch(name, key, touch \\ true, func) do
+    case get(name, key, touch) do
+      nil ->
+        value = func.()
+        put(name, key, value)
+        value
+      value -> value
+    end
+  end
+
+  @doc """
   Removes the entry stored under the given `key` from cache.
   """
   def delete(name, key), do: Agent.get(name, __MODULE__, :handle_delete, [key])

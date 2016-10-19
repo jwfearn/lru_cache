@@ -99,4 +99,11 @@ defmodule LruCacheTest do
     LruCache.put(:test8, 6, "test 6")
     assert nil == LruCache.get(:test8, 1, false)
   end
+
+  test "lru fetch works" do
+    assert {:ok, _} = LruCache.start_link(:test_fetch, 10)
+    assert nil == LruCache.get(:test_fetch, 1)
+    assert :ok == LruCache.fetch(:test_fetch, 1, fn -> :ok end)
+    assert :ok == LruCache.get(:test_fetch, 1)
+  end
 end
